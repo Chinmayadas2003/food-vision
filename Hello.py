@@ -13,13 +13,23 @@
 # limitations under the License.
 
 import streamlit as st
+from streamlit.logger import get_logger
+
+LOGGER = get_logger(__name__)
+
+
+
+
+import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
 
+
+
 # Load your trained model
 model_path = 'model.h5'
-model = tf.keras.models.load_model(model_path)
+model = tf.keras.models.load_model('model.h5')
 
 # Function to preprocess the image
 def preprocess_image(image_path):
@@ -27,7 +37,7 @@ def preprocess_image(image_path):
     img = img.resize((224, 224))  # Adjust the size based on your model's input size
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)  # Create batch axis
-    # img_array /= 255.0  # Normalize pixel values
+    #img_array /= 255.0  # Normalize pixel values
     return img_array
 
 # Set page title and favicon
@@ -45,31 +55,11 @@ st.markdown("Upload an image to get predictions on the type of food!")
 primary_color = "#f63366"  # Custom pink color
 secondary_color = "#00bcd4"  # Custom teal color
 
-# Set the color scheme for the sidebar
-st.markdown(f"""
-        <style>
-            .reportview-container .sidebar .sidebar-content {{
-                background: {primary_color};
-                color: #ffffff;
-            }}
-            .reportview-container .main .block-container {{
-                background: #ffffff;
-            }}
-            .reportview-container .main .image-container img {{
-                border: 5px solid {secondary_color};
-                border-radius: 10px;
-            }}
-        </style>
-        """, unsafe_allow_html=True)
+uploaded_file = st.file_uploader("Choose an image...", type="jpg")
 
-# Upload file section with colorful styling
-uploaded_file = st.file_uploader("Choose an image...", type="jpg", key="fileUploader", help="Only JPG files are supported.")
 if uploaded_file is not None:
     # Display the uploaded image
-    st.markdown(
-        f'<img src="data:image/jpeg;base64,{uploaded_file.read().encode("base64").decode()}" alt="Uploaded Image" style="width:100%; border: 5px solid {secondary_color}; border-radius: 10px;">',
-        unsafe_allow_html=True
-    )
+    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
 
     # Preprocess the image
     img_array = preprocess_image(uploaded_file)
@@ -79,12 +69,8 @@ if uploaded_file is not None:
     class_index = np.argmax(predictions[0])
     confidence = predictions[0][class_index]
 
-    # Display the results with colorful styling
-    st.subheader("Prediction:")
-    st.markdown(f"<span style='color:{primary_color}; font-weight:bold;'>Class:</span> {class_index}", unsafe_allow_html=True)
-    st.markdown(f"<span style='color:{primary_color}; font-weight:bold;'>Confidence:</span> {confidence:.2%}", unsafe_allow_html=True)
-
-    # Add some colorful styling for better visual appeal
-    st.success("🎉 Prediction successfully made!")
-    st.balloons()
+    # Display the results
+    st.write("Prediction:")
+    st.write(f"Class: {class_index}")
+    st.write(f"Confidence: {confidence:.2%}")
 
