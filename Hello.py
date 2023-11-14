@@ -27,7 +27,7 @@ def preprocess_image(image_path):
     img = img.resize((224, 224))  # Adjust the size based on your model's input size
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)  # Create batch axis
-    # img_array /= 255.0  # Normalize pixel values
+    img_array /= 255.0  # Normalize pixel values
     return img_array
 
 # Set page title and favicon
