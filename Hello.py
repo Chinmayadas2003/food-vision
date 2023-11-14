@@ -27,21 +27,42 @@ def preprocess_image(image_path):
     img = img.resize((224, 224))  # Adjust the size based on your model's input size
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)  # Create batch axis
-    #img_array /= 255.0  # Normalize pixel values
+    # img_array /= 255.0  # Normalize pixel values
     return img_array
 
 # Set page title and favicon
-st.set_page_config(page_title="Food Vision App", page_icon="🍔")
+st.set_page_config(
+    page_title="🌈 Food Vision App",
+    page_icon="🍔",
+    layout="wide",
+)
 
 # Streamlit App
-st.title('Food Vision Model Deployment')
+st.title('🌮 Food Vision Model Deployment')
 st.markdown("Upload an image to get predictions on the type of food!")
 
-uploaded_file = st.file_uploader("Choose an image...", type="jpg", key="fileUploader")
+# Choose a color scheme
+primary_color = "#f63366"  # Custom pink color
+secondary_color = "#00bcd4"  # Custom teal color
 
+# Set the color scheme for the sidebar
+st.markdown(f"""
+        <style>
+            .reportview-container .sidebar .sidebar-content {{
+                background: {primary_color};
+                color: #ffffff;
+            }}
+            .reportview-container .main .block-container {{
+                background: #ffffff;
+            }}
+        </style>
+        """, unsafe_allow_html=True)
+
+# Upload file section with colorful styling
+uploaded_file = st.file_uploader("Choose an image...", type="jpg", key="fileUploader", help="Only JPG files are supported.")
 if uploaded_file is not None:
-    # Display the uploaded image
-    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+    # Display the uploaded image with colorful borders
+    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True, output_format="auto", clamp=True, channels="RGB", style=f"border: 5px solid {secondary_color}; border-radius: 10px;")
 
     # Preprocess the image
     img_array = preprocess_image(uploaded_file)
@@ -51,13 +72,12 @@ if uploaded_file is not None:
     class_index = np.argmax(predictions[0])
     confidence = predictions[0][class_index]
 
-    # Display the results
+    # Display the results with colorful styling
     st.subheader("Prediction:")
-    st.write(f"Class: {class_index}")
-    st.write(f"Confidence: {confidence:.2%}")
+    st.markdown(f"<span style='color:{primary_color}; font-weight:bold;'>Class:</span> {class_index}", unsafe_allow_html=True)
+    st.markdown(f"<span style='color:{primary_color}; font-weight:bold;'>Confidence:</span> {confidence:.2%}", unsafe_allow_html=True)
 
-    # Add some styling for better visual appeal
-    st.success("Prediction successfully made!")
+    # Add some colorful styling for better visual appeal
+    st.success("🎉 Prediction successfully made!")
     st.balloons()
-
 
