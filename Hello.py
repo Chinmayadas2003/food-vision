@@ -34,10 +34,10 @@ model = tf.keras.models.load_model('weights.best.Resnet50.hdf5')
 # Function to preprocess the image
 def preprocess_image(image_path):
     img = Image.open(image_path)
-    img = img.resize((224, 224))  # Adjust the size based on your model's input size
+    img = img.resize((1, 1,2048))  # Adjust the size based on your model's input size
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)  # Create batch axis
-    img_array /= 255.0  # Normalize pixel values
+    #img_array /= 255.0  # Normalize pixel values
     return img_array
 
 # Streamlit App
