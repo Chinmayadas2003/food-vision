@@ -27,7 +27,7 @@ def preprocess_image(image_path):
     img = img.resize((224, 224))  # Adjust the size based on your model's input size
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)  # Create batch axis
-    img_array /= 255.0  # Normalize pixel values
+    # img_array /= 255.0  # Normalize pixel values
     return img_array
 
 # Set page title and favicon
@@ -55,14 +55,21 @@ st.markdown(f"""
             .reportview-container .main .block-container {{
                 background: #ffffff;
             }}
+            .reportview-container .main .image-container img {{
+                border: 5px solid {secondary_color};
+                border-radius: 10px;
+            }}
         </style>
         """, unsafe_allow_html=True)
 
 # Upload file section with colorful styling
 uploaded_file = st.file_uploader("Choose an image...", type="jpg", key="fileUploader", help="Only JPG files are supported.")
 if uploaded_file is not None:
-    # Display the uploaded image with colorful borders
-    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True, output_format="auto", clamp=True, channels="RGB", style=f"border: 5px solid {secondary_color}; border-radius: 10px;")
+    # Display the uploaded image
+    st.markdown(
+        f'<img src="data:image/jpeg;base64,{uploaded_file.read().encode("base64").decode()}" alt="Uploaded Image" style="width:100%; border: 5px solid {secondary_color}; border-radius: 10px;">',
+        unsafe_allow_html=True
+    )
 
     # Preprocess the image
     img_array = preprocess_image(uploaded_file)
