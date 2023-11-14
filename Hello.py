@@ -47,5 +47,46 @@ def run():
     )
 
 
+import streamlit as st
+import tensorflow as tf
+import numpy as np
+from PIL import Image
 if __name__ == "__main__":
     run()
+
+
+# Load your trained model
+model_path = 'weights.best.Resnet50.hdf5'
+model = tf.keras.models.load_model('weights.best.Resnet50.hdf5')
+
+# Function to preprocess the image
+def preprocess_image(image_path):
+    img = Image.open(image_path)
+    img = img.resize((224, 224))  # Adjust the size based on your model's input size
+    img_array = tf.keras.preprocessing.image.img_to_array(img)
+    img_array = tf.expand_dims(img_array, 0)  # Create batch axis
+    img_array /= 255.0  # Normalize pixel values
+    return img_array
+
+# Streamlit App
+st.title('Food Vision Model Deployment')
+
+uploaded_file = st.file_uploader("Choose an image...", type="jpg")
+
+if uploaded_file is not None:
+    # Display the uploaded image
+    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+
+    # Preprocess the image
+    img_array = preprocess_image(uploaded_file)
+
+    # Make predictions
+    predictions = model.predict(img_array)
+    class_index = np.argmax(predictions[0])
+    confidence = predictions[0][class_index]
+
+    # Display the results
+    st.write("Prediction:")
+    st.write(f"Class: {class_index}")
+    st.write(f"Confidence: {confidence:.2%}")
+
