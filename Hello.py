@@ -28,8 +28,8 @@ from PIL import Image
 
 
 # Load your trained model
-model_path = 'weights.best.Resnet50.hdf5'
-model = tf.keras.models.load_model('weights.best.Resnet50.hdf5')
+model_path = 'model.h5'
+model = tf.keras.models.load_model('model.h5')
 
 # Function to preprocess the image
 def preprocess_image(image_path):
